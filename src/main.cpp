@@ -1,4 +1,4 @@
-#include "card.h"
+#include "game/card.h"
 #include "engine/render_queue.h"
 #include "engine/interaction_system.h"
 #include "raylib.h"
@@ -11,29 +11,57 @@ int main()
     engine::RenderQueue queue = engine::RenderQueue();
 
     Shader balatroShader = LoadShader(0, "resources/shaders/menu_background.fs");
-    RenderTexture2D target = LoadRenderTexture(160, 240);
-    int iResolutionLoc = GetShaderLocation(balatroShader, "iResolution");
-    int iTimeLoc = GetShaderLocation(balatroShader, "iTime");
     float resolution[2] = { (float)160, (float)240 };
-    SetShaderValue(balatroShader, iResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
+    Texture2D deckAtlas = LoadTexture("resources/textures/1x/8BitDeck.png");
+    Texture2D enhancerAtlas = LoadTexture("resources/textures/1x/Enhancers.png");
     Vector2 position {333, 333};
-    Vector2 size {160, 240};
+    Vector2 size {71, 95};
     float rotation = 0.0f;
-    float scale = 1.0f;
+    float scale = 3.0f;
 
-    Card card = Card(target.texture, {.position = position, .size = size, .rotation = rotation, .scale = scale});
-    Card card2 = Card(target.texture, {.position = {.x=position.x + 50, .y=position.y}, .size = size, .rotation = rotation, .scale = scale});
-    
+    game::Card card(
+        deckAtlas,
+        enhancerAtlas,
+        game::CardSuit::HEARTH, game::CardRank::TWO,   // atlasX, atlasY
+        game::CardEnhancement::E_BLANK,
+        {.position = position, .size = size, .rotation = rotation, .scale = scale}
+    );
+
+    game::Card card2(
+        deckAtlas,
+        enhancerAtlas,
+        game::CardSuit::DIAMOND, game::CardRank::J,    // another card sprite
+        game::CardEnhancement::E_GOLD,
+        {.position = {.x=position.x + 200, .y=position.y}, .size = size, .rotation = rotation, .scale = scale}
+    );
+
+    game::Card card3(
+        deckAtlas,
+        enhancerAtlas,
+        game::CardSuit::CLUB, game::CardRank::ACE,   // another card sprite
+        game::CardEnhancement::E_BLANK,
+        {.position = {.x=position.x + 400, .y=position.y}, .size = size, .rotation = rotation, .scale = scale}
+    );
+
+    game::Card card4(
+        deckAtlas,
+        enhancerAtlas,
+        game::CardSuit::SPADE, game::CardRank::K,   // another card sprite
+        game::CardEnhancement::E_BLANK,
+        {.position = {.x=position.x + 600, .y=position.y}, .size = size, .rotation = rotation, .scale = scale}
+    );
+
     engine::InteractionSystem interaction;
     std::vector<engine::Node*> nodes;
     nodes.push_back(&card);
     nodes.push_back(&card2);
+    nodes.push_back(&card3);
+    nodes.push_back(&card4);
     while (!WindowShouldClose())
     {
     float dt = GetFrameTime();
     float time = (float)GetTime();
-    SetShaderValue(balatroShader, iTimeLoc, &time, SHADER_UNIFORM_FLOAT);
 
     queue.Clear();                        // 1️⃣ clear first
 
@@ -51,10 +79,7 @@ int main()
     BeginDrawing();
         ClearBackground(DARKGREEN);
 
-        BeginShaderMode(balatroShader);
-            queue.Flush();
-        EndShaderMode();
-
+        queue.Flush();
     EndDrawing();
 }
 

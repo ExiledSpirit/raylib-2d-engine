@@ -23,7 +23,7 @@ class Node : public Object
 {
 public:
   virtual ~Node() = default;
-  Node(Transform transform): transform(transform) {}
+  Node(Transform transform): transform(transform), scale(transform.scale) {}
   void Draw(RenderQueue& queue);
   virtual void Render() = 0;
 

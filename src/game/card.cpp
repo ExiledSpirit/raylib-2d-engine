@@ -1,13 +1,17 @@
-#include "card.h"
+#include "game/card.h"
+#include "game/utils.h"
 #include "iostream"
 #include <raymath.h>
+
+namespace game
+{
+Card::Card(Texture2D& deckAtlas, Texture2D& enhancerAtlas, CardSuit suit, CardRank rank, CardEnhancement enhancement, engine::Transform transform)
+    : deckAtlas(&deckAtlas), enhancerAtlas(&enhancerAtlas), suit(suit), rank(rank), enhancement(enhancement), engine::Node(transform) {}
+
 void Card::Render()
 {
-    Rectangle source = {
-        0, 0,
-        (float)texture.width,
-        -(float)texture.height  // flip Y once
-    };
+    const int CARD_W = 71;
+    const int CARD_H = 95;
 
     Rectangle dest = {
         transform.position.x,
@@ -21,12 +25,43 @@ void Card::Render()
         dest.height * 0.5f
     };
 
+    //------------------------------------
+    // 1️⃣ Draw enhancer background
+    //------------------------------------
+
+    Rectangle enhancerSource = {
+        (float)((int)enhancement * CARD_W),
+        0,
+        (float)CARD_W,
+        (float)CARD_H
+    };
+
     DrawTexturePro(
-        texture,
-        source,
+        *enhancerAtlas,
+        enhancerSource,
         dest,
         origin,
-        tilt,     // use animated tilt
+        tilt,
+        WHITE
+    );
+
+    //------------------------------------
+    // 2️⃣ Draw rank/suit sprite
+    //------------------------------------
+
+    Rectangle cardSource = {
+        (float)((int)rank * CARD_W),
+        (float)((int)suit * CARD_H),
+        (float)CARD_W,
+        (float)CARD_H
+    };
+
+    DrawTexturePro(
+        *deckAtlas,
+        cardSource,
+        dest,
+        origin,
+        tilt,
         WHITE
     );
 }
@@ -45,7 +80,7 @@ void Card::Update(float dt)
         targetLift = 25.f;
 
         // Slight scale boost
-        targetScale = 1.05f;
+        targetScale = transform.scale * 1.05f;
 
         // Calculate tilt based on mouse offset
         Vector2 delta = {
@@ -61,16 +96,16 @@ void Card::Update(float dt)
     else
     {
         targetLift = 0.f;
-        targetScale = 1.f;
+        targetScale = transform.scale;
         targetTilt = 0.f;
     }
 
     // Smooth interpolation
     float speed = 10.f;
 
-    lift  = Lerp(lift,  targetLift,  dt * speed);
-    tilt  = Lerp(tilt,  targetTilt,  dt * speed);
-    scale = Lerp(scale, targetScale, dt * speed);
+    lift  = Utils::SmoothLerp(lift, targetLift, dt, speed);
+    tilt  = Utils::SmoothLerp(tilt, targetTilt, dt, speed);
+    scale = Utils::SmoothLerp(scale, targetScale, dt, speed);
 }
 
 bool Card::CollidesWithPoint(Vector2 point)
@@ -104,4 +139,6 @@ bool Card::CollidesWithPoint(Vector2 point)
            rotated.x <=  halfW &&
            rotated.y >= -halfH &&
            rotated.y <=  halfH;
+}
+
 }
