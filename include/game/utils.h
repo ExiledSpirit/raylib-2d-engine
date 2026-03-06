@@ -1,4 +1,4 @@
-#include "game/card.h"
+#pragma once
 #include "raymath.h"
 
 namespace game

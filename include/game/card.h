@@ -1,5 +1,6 @@
 #pragma once
 #include "engine/node.h"
+#include "engine/moveable.h"
 
 namespace game
 {
@@ -35,7 +36,7 @@ enum struct CardRank
     ACE
 };
 
-class Card : public engine::Node
+class Card : public engine::Moveable
 {
 public:
     Card(Texture2D& deckAtlas, Texture2D& enhancerAtlas, CardSuit suit, CardRank rank, CardEnhancement enhancement, engine::Transform transform);

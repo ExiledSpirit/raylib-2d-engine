@@ -15,10 +15,11 @@ int main()
 
     Texture2D deckAtlas = LoadTexture("resources/textures/1x/8BitDeck.png");
     Texture2D enhancerAtlas = LoadTexture("resources/textures/1x/Enhancers.png");
-    Vector2 position {333, 333};
+    Vector2 position {100, 300};
     Vector2 size {71, 95};
     float rotation = 0.0f;
     float scale = 3.0f;
+
 
     game::Card card(
         deckAtlas,
@@ -33,7 +34,7 @@ int main()
         enhancerAtlas,
         game::CardSuit::DIAMOND, game::CardRank::J,    // another card sprite
         game::CardEnhancement::E_GOLD,
-        {.position = {.x=position.x + 200, .y=position.y}, .size = size, .rotation = rotation, .scale = scale}
+        {.position = {.x=position.x, .y=position.y}, .size = size, .rotation = rotation, .scale = scale}
     );
 
     game::Card card3(
@@ -41,7 +42,7 @@ int main()
         enhancerAtlas,
         game::CardSuit::CLUB, game::CardRank::ACE,   // another card sprite
         game::CardEnhancement::E_BLANK,
-        {.position = {.x=position.x + 400, .y=position.y}, .size = size, .rotation = rotation, .scale = scale}
+        {.position = {.x=position.x, .y=position.y}, .size = size, .rotation = rotation, .scale = scale}
     );
 
     game::Card card4(
@@ -49,7 +50,7 @@ int main()
         enhancerAtlas,
         game::CardSuit::SPADE, game::CardRank::K,   // another card sprite
         game::CardEnhancement::E_BLANK,
-        {.position = {.x=position.x + 600, .y=position.y}, .size = size, .rotation = rotation, .scale = scale}
+        {.position = {.x=position.x, .y=position.y}, .size = size, .rotation = rotation, .scale = scale}
     );
 
     engine::InteractionSystem interaction;
@@ -60,28 +61,28 @@ int main()
     nodes.push_back(&card4);
     while (!WindowShouldClose())
     {
-    float dt = GetFrameTime();
-    float time = (float)GetTime();
+        float dt = GetFrameTime();
+        float time = (float)GetTime();
 
-    queue.Clear();                        // 1️⃣ clear first
+        queue.Clear();
+        Vector2 mouse = GetMousePosition();
+        interaction.Update(nodes);
 
-    // 2️⃣ resolve hover
-    interaction.Update(nodes);
+        for (size_t i = 0; i < nodes.size(); i++)
+        {
+            auto* card = (game::Card*)nodes.at(i);
+            card->Move({float(100 + i*250), 300});
+            if (i==0) card->Follow(mouse);
+            card->Update(dt);
+            card->Draw(queue);
+        }
 
-    // 3️⃣ update + submit
-    for (auto* node : nodes)
-    {
-        node->Update(dt);
-        node->Draw(queue);
+        BeginDrawing();
+            ClearBackground(DARKGREEN);
+
+            queue.Flush();
+        EndDrawing();
     }
-
-    // 4️⃣ render
-    BeginDrawing();
-        ClearBackground(DARKGREEN);
-
-        queue.Flush();
-    EndDrawing();
-}
 
     CloseWindow();
 }

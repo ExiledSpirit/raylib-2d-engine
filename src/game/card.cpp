@@ -6,7 +6,7 @@
 namespace game
 {
 Card::Card(Texture2D& deckAtlas, Texture2D& enhancerAtlas, CardSuit suit, CardRank rank, CardEnhancement enhancement, engine::Transform transform)
-    : deckAtlas(&deckAtlas), enhancerAtlas(&enhancerAtlas), suit(suit), rank(rank), enhancement(enhancement), engine::Node(transform) {}
+    : deckAtlas(&deckAtlas), enhancerAtlas(&enhancerAtlas), suit(suit), rank(rank), enhancement(enhancement), engine::Moveable(transform) {}
 
 void Card::Render()
 {
@@ -67,6 +67,7 @@ void Card::Render()
 }
 void Card::Update(float dt)
 {
+    this->engine::Moveable::Update(dt);
     Vector2 mouse = GetMousePosition();
 
     Vector2 center = {
