@@ -20,25 +20,21 @@ void Node::Draw(RenderQueue& queue)
 
 bool Node::CollidesWithPoint(Vector2 point)
 {
-    // 1️⃣ Get actual rendered position (including lift)
     Vector2 renderPos = {
         transform.position.x,
-        transform.position.y - lift   // IMPORTANT
+        transform.position.y - lift
     };
 
-    // 2️⃣ Compute center (origin used in DrawTexturePro)
     Vector2 center = {
         renderPos.x,
         renderPos.y
     };
 
-    // 3️⃣ Move mouse into local space
     Vector2 local = {
         point.x - center.x,
         point.y - center.y
     };
 
-    // 4️⃣ Apply inverse rotation
     float cosR = cosf(-transform.rotation * DEG2RAD);
     float sinR = sinf(-transform.rotation * DEG2RAD);
 
@@ -47,7 +43,6 @@ bool Node::CollidesWithPoint(Vector2 point)
         local.x * sinR + local.y * cosR
     };
 
-    // 5️⃣ Check inside unrotated bounds
     float halfW = transform.size.x * 0.5f;
     float halfH = transform.size.y * 0.5f;
 

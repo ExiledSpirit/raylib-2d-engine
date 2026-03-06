@@ -25,10 +25,6 @@ void Card::Render()
         dest.height * 0.5f
     };
 
-    //------------------------------------
-    // 1️⃣ Draw enhancer background
-    //------------------------------------
-
     Rectangle enhancerSource = {
         (float)((int)enhancement * CARD_W),
         0,
@@ -44,10 +40,6 @@ void Card::Render()
         tilt,
         WHITE
     );
-
-    //------------------------------------
-    // 2️⃣ Draw rank/suit sprite
-    //------------------------------------
 
     Rectangle cardSource = {
         (float)((int)rank * CARD_W),
@@ -65,6 +57,7 @@ void Card::Render()
         WHITE
     );
 }
+
 void Card::Update(float dt)
 {
     this->engine::Moveable::Update(dt);
@@ -111,7 +104,7 @@ void Card::Update(float dt)
 
 bool Card::CollidesWithPoint(Vector2 point)
 {
-    float buffer = hover.is ? 32.f : 0.f;   // 👈 padding
+    float buffer = hover.is ? 32.f : 0.f;
 
     Vector2 renderPos = {
         transform.position.x,
