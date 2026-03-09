@@ -26,6 +26,7 @@ public:
   Moveable(Transform transform, engine::RenderResources renderResources): Node(transform, renderResources){};
   
   void Move(Vector2 target);
+  void EndMove();
   void Follow(Vector2 target);
   void StartDrag(Vector2 mouse);
   void StopDrag();

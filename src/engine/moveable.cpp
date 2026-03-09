@@ -9,6 +9,7 @@ namespace engine
 
 void Moveable::Move(Vector2 target)
 {
+  layer = 1;
   following = false;
   dragging = false;
   // if (target.x == this->targetPosition.x && target.y == this->targetPosition.y) return;
@@ -17,6 +18,11 @@ void Moveable::Move(Vector2 target)
   this->targetPosition = target;
 
   this->moveTime = 0.0f;
+}
+
+void Moveable::EndMove()
+{
+  this->layer = 0;
 }
 
 void Moveable::Update(float dt)
@@ -49,13 +55,18 @@ void Moveable::Update(float dt)
   }
   this->moveTime = std::min<float>(this->moveTime + dt, 1.0f);
 
-  float x = EaseCubicInOut(
+  if (this->moveTime == 1.0f) {
+    this->EndMove();
+    return;
+  }
+
+  float x = EaseCubicOut(
     this->moveTime,
     this->startPosition.x,
     this->targetPosition.x - this->startPosition.x,
     1
   );
-  float y = EaseCubicInOut(
+  float y = EaseCubicOut(
     this->moveTime,
     this->startPosition.y,
     this->targetPosition.y - this->startPosition.y,
