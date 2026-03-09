@@ -1,41 +1,51 @@
 #include "engine/interaction_system.h"
+#include "engine/moveable.h"
 
 namespace engine
 {
-
 void InteractionSystem::Update(std::vector<Node*>& nodes)
 {
-    Vector2 mouse = GetMousePosition();
+  Vector2 mouse = GetMousePosition();
 
-    TraceLog(LOG_INFO, "Mouse: (%.2f, %.2f)", mouse.x, mouse.y);
-    Node* newHovered = nullptr;
+  Node* hovered = nullptr;
 
-    // iterate in reverse render order (top first)
-    for (auto it = nodes.rbegin(); it != nodes.rend(); ++it)
+  // iterate in reverse draw order
+  for (auto it = nodes.rbegin(); it != nodes.rend(); ++it)
+  {
+    Node* node = *it;
+
+    if (node->CollidesWithPoint(mouse))
     {
-        Node* node = *it;
-
-        if (!node->hover.can)
-            continue;
-
-        if (node->CollidesWithPoint(mouse))
-        {
-            TraceLog(LOG_INFO, "Collides!");
-            newHovered = node;
-            break;
-        }
+      hovered = node;
+      break;
     }
+  }
 
-    if (hovered != newHovered)
+  for (Node* node : nodes) {
+    node->hover.is = false;
+  }
+
+  if (hovered)
+    hovered->hover.is = true;
+
+  if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+  {
+    if (hovered)
     {
-        if (hovered)
-            hovered->hover.is = false;
+      auto* moveable = dynamic_cast<Moveable*>(hovered);
 
-        hovered = newHovered;
-
-        if (hovered)
-            hovered->hover.is = true;
+      if (moveable) {
+        moveable->StartDrag(GetMousePosition());
+        this->draggingNode = moveable;
+      }
     }
+  }
+  if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
+  {
+    if (this->draggingNode) {
+      this->draggingNode->StopDrag();
+      this->draggingNode = nullptr;
+    }
+  }
 }
-
 }

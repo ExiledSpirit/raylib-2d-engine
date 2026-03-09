@@ -1,6 +1,7 @@
 #pragma once
 #include "engine/object.h"
 #include "engine/render_queue.h"
+#include "engine/render_resources.h"
 #include <vector>
 #include "raylib.h"
 
@@ -24,9 +25,11 @@ class Node : public Object
 public:
   virtual ~Node() = default;
   Node(Transform transform): transform(transform), scale(transform.scale) {}
+  Node(Transform transform, RenderResources renderResources): transform(transform), scale(transform.scale), renderResources(renderResources) {}
   void Draw(RenderQueue& queue);
   virtual void Render() = 0;
 
+  Node* container = nullptr;
   Transform transform;
   int layer = 0;
   bool visible = true;
@@ -40,6 +43,7 @@ public:
   float targetScale = 1.f;
 
   std::vector<Node*> children;
+  RenderResources renderResources;
 
   virtual void Update(float dt);
   void Release(bool dragged);
@@ -51,6 +55,7 @@ public:
   void StopDrag();
   bool CanDrag();
   void Drag();
+  void SetContainer(Node* newContainer);
   HoverState hover;
   virtual bool CollidesWithPoint(Vector2 point);
 };

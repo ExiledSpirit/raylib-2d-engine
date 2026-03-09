@@ -8,36 +8,24 @@ out vec2 fragTexCoord;
 out vec4 fragColor;
 
 uniform mat4 mvp;
-
-uniform vec2 mouse_screen_pos;
-uniform float hovering;
-uniform float screen_scale;
-uniform vec2 screen_size;
+uniform vec2 tilt;
+uniform float hover;
 
 void main()
 {
-    vec4 position = vec4(vertexPosition, 1.0);
+  vec3 pos = vertexPosition;
 
-    if (hovering > 0.0)
-    {
-        float mid_dist =
-            length(position.xy - 0.5 * screen_size) /
-            length(screen_size);
+  if (hover > 0.0)
+  {
+    float skewX = tilt.x * 8.0;
+    float skewY = tilt.y * 8.0;
 
-        vec2 mouse_offset =
-            (position.xy - mouse_screen_pos) / screen_scale;
+    pos.x += vertexPosition.y * skewX;
+    pos.y += vertexPosition.x * skewY;
+  }
 
-        float scale =
-            0.2 * (-0.03 - 0.3 * max(0.0, 0.3 - mid_dist))
-            * hovering
-            * (length(mouse_offset) * length(mouse_offset))
-            / (2.0 - mid_dist);
+  gl_Position = mvp * vec4(pos, 1.0);
 
-        position.z += scale;
-    }
-
-    gl_Position = mvp * position;
-
-    fragTexCoord = vertexTexCoord;
-    fragColor = vertexColor;
+  fragTexCoord = vertexTexCoord;
+  fragColor = vertexColor;
 }

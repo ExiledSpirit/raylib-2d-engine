@@ -5,8 +5,14 @@
 
 namespace game
 {
-Card::Card(Texture2D& deckAtlas, Texture2D& enhancerAtlas, CardSuit suit, CardRank rank, CardEnhancement enhancement, engine::Transform transform)
-    : deckAtlas(&deckAtlas), enhancerAtlas(&enhancerAtlas), suit(suit), rank(rank), enhancement(enhancement), engine::Moveable(transform) {}
+Card::Card(
+    Texture2D& deckAtlas, 
+    Texture2D& enhancerAtlas,
+    CardSuit suit, CardRank rank, CardEnhancement enhancement,
+    engine::Transform transform,
+    engine::RenderResources renderResources
+)
+    : deckAtlas(&deckAtlas), enhancerAtlas(&enhancerAtlas), suit(suit), rank(rank), enhancement(enhancement), engine::Moveable(transform, renderResources) {}
 
 void Card::Render()
 {

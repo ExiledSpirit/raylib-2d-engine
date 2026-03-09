@@ -1,4 +1,5 @@
 #include "engine/render_queue.h"
+#include "engine/shader_instance.h"
 #include "engine/node.h"
 #include "engine/moveable.h"
 #include "iostream"
@@ -8,33 +9,42 @@ namespace engine
 
 void RenderQueue::Submit(Node* node, int layer)
 {
-  std::cout << "renderqueue: submit" << std::endl;
   layers[layer].push_back(node);
 }
 
 void RenderQueue::Flush()
 {
+  ShaderInstance* currentShader = nullptr;
   Node* draggingNode = nullptr;
-  for (auto& [layer, nodes]: layers)
+
+  for (auto& [layer, nodes] : layers)
   {
-  std::cout << "renderqueue: rendering" << std::endl;
     for (Node* node : nodes)
     {
-      engine::Moveable* moveable = (engine::Moveable*)node;
-      if (moveable->following) 
+      Moveable* moveable = dynamic_cast<Moveable*>(node);
+
+      ShaderInstance* shader = node->renderResources.shaderInstance;
+
+      if (shader != currentShader)
       {
-        draggingNode = moveable;
-        continue;
+        // if (currentShader)
+        //   EndShaderMode();
+
+        currentShader = shader;
+
+        // if (currentShader)
+        //   BeginShaderMode(currentShader->shader);
       }
-      std::cout << "renderqueue: rendering" << std::endl;
+
+      if (currentShader)
+        currentShader->Update(node);
+
       node->Render();
     }
   }
 
-  if (draggingNode)
-  {
-    draggingNode->Render();
-  }
+  // if (currentShader)
+  //   EndShaderMode();
 }
 
 void RenderQueue::Clear()

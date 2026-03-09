@@ -18,6 +18,12 @@ void Node::Draw(RenderQueue& queue)
   }
 }
 
+void Node::SetContainer(Node* newContainer)
+{
+    container = newContainer;
+    newContainer->children.push_back(this);
+}
+
 bool Node::CollidesWithPoint(Vector2 point)
 {
     Vector2 renderPos = {

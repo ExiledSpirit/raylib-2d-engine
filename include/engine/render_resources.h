@@ -3,14 +3,11 @@
 namespace engine
 {
 
-struct RenderContext
-{
-    Shader skewShader;
+class ShaderInstance;
 
-    int mouseLoc;
-    int hoveringLoc;
-    int scaleLoc;
-    int screenSizeLoc;
+struct RenderResources
+{
+    ShaderInstance* shaderInstance;
 };
  
 }

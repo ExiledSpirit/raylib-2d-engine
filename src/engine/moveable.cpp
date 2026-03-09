@@ -2,6 +2,7 @@
 #include "game/utils.h"
 #include "external/reasings.h"
 #include <algorithm>
+#include <iostream>
 
 namespace engine
 {
@@ -9,7 +10,8 @@ namespace engine
 void Moveable::Move(Vector2 target)
 {
   following = false;
-  if (target.x == this->targetPosition.x && target.y == this->targetPosition.y) return;
+  dragging = false;
+  // if (target.x == this->targetPosition.x && target.y == this->targetPosition.y) return;
   
   this->startPosition = transform.position;
   this->targetPosition = target;
@@ -19,6 +21,23 @@ void Moveable::Move(Vector2 target)
 
 void Moveable::Update(float dt)
 {
+  if (dragging)
+  {
+    Vector2 mouse = GetMousePosition();
+
+    Vector2 target = {
+      mouse.x - clickOffset.x,
+      mouse.y - clickOffset.y
+    };
+
+    transform.position = Vector2Lerp(
+      transform.position,
+      target,
+      dt * dragFollowSpeed
+    );
+
+    return;
+  }
   if (following)
   {
     transform.position = Vector2Lerp(
@@ -48,6 +67,31 @@ void Moveable::Update(float dt)
 void Moveable::Follow(Vector2 target) {
   this->followTarget = target;
   this->following = true;
+}
+
+void Moveable::StartDrag(Vector2 mouse)
+{
+  std::cout << "Drag started\n";
+  layer = 1;
+  dragging = true;
+
+  clickOffset = {
+    mouse.x - transform.position.x,
+    mouse.y - transform.position.y
+  };
+
+  originalPosition = targetPosition;
+  originalContainer = container;
+
+  moveTime = 1.0f;
+}
+
+void Moveable::StopDrag()
+{
+  layer = 0;
+  dragging = false;
+  std::cout << "Drag stopped\n" << "original.x=" << originalPosition.x << "original.y=" << originalPosition.y << "\n";
+  Move(originalPosition);
 }
 
 }

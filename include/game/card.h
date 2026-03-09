@@ -39,7 +39,13 @@ enum struct CardRank
 class Card : public engine::Moveable
 {
 public:
-    Card(Texture2D& deckAtlas, Texture2D& enhancerAtlas, CardSuit suit, CardRank rank, CardEnhancement enhancement, engine::Transform transform);
+    Card(
+        Texture2D& deckAtlas,
+        Texture2D& enhancerAtlas,
+        CardSuit suit,CardRank rank, CardEnhancement enhancement,
+        engine::Transform transform,
+        engine::RenderResources renderResources
+    );
 
     void Render() override;
     void Update(float dt) override;
