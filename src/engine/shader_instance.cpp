@@ -8,7 +8,15 @@ namespace engine
 
 void ShaderInstance::Update(Node* node)
 {
+  float resolution[2] = { (float)GetScreenWidth(), (float)GetScreenHeight() };
+  float time = (float)GetTime();
   float hovering = node->hover.is ? 1.0f : 0.0f;
+
+  if (timeLoc != -1)
+    SetShaderValue(shader, timeLoc, &time, SHADER_UNIFORM_FLOAT);
+
+  if (resolutionLoc != -1)
+    SetShaderValue(shader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   if (hoverLoc != -1)
     SetShaderValue(shader, hoverLoc, &hovering, SHADER_UNIFORM_FLOAT);

@@ -21,19 +21,17 @@ void RenderQueue::Flush()
   {
     for (Node* node : nodes)
     {
-      Moveable* moveable = dynamic_cast<Moveable*>(node);
-
       ShaderInstance* shader = node->renderResources.shaderInstance;
 
       if (shader != currentShader)
       {
-        // if (currentShader)
-        //   EndShaderMode();
+        if (currentShader)
+          EndShaderMode();
 
         currentShader = shader;
 
-        // if (currentShader)
-        //   BeginShaderMode(currentShader->shader);
+        if (currentShader) 
+          BeginShaderMode(currentShader->shader);
       }
 
       if (currentShader)
@@ -43,8 +41,8 @@ void RenderQueue::Flush()
     }
   }
 
-  // if (currentShader)
-  //   EndShaderMode();
+  if (currentShader)
+    EndShaderMode();
 }
 
 void RenderQueue::Clear()
