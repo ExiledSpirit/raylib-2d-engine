@@ -7,7 +7,7 @@
 namespace engine
 {
 
-void RenderQueue::Submit(Node* node, int layer)
+void RenderQueue::Submit(Node* node, RenderLayer layer)
 {
   layers[layer].push_back(node);
 }

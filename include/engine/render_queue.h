@@ -1,4 +1,5 @@
 #pragma once
+#include "engine/render_layer.h"
 #include <map>
 #include <vector>
 
@@ -10,12 +11,12 @@ class Node;
 class RenderQueue
 {
 public:
-  void Submit(Node* node, int layer);
+  void Submit(Node* node, RenderLayer layer);
   void Flush();
   void Clear();
 
 private:
-  std::map<int, std::vector<Node*>> layers = std::map<int, std::vector<Node*>>();
+  std::map<RenderLayer, std::vector<Node*>> layers = std::map<RenderLayer, std::vector<Node*>>();
 };
 
 }

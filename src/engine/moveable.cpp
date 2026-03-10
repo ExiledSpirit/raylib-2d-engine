@@ -1,4 +1,5 @@
 #include "engine/moveable.h"
+#include "engine/render_layer.h"
 #include "game/utils.h"
 #include "external/reasings.h"
 #include <algorithm>
@@ -9,7 +10,7 @@ namespace engine
 
 void Moveable::Move(Vector2 target)
 {
-  layer = 1;
+  layer = RenderLayer::MOVING;
   following = false;
   dragging = false;
   // if (target.x == this->targetPosition.x && target.y == this->targetPosition.y) return;
@@ -22,7 +23,7 @@ void Moveable::Move(Vector2 target)
 
 void Moveable::EndMove()
 {
-  this->layer = 0;
+  this->layer = RenderLayer::CARD;
 }
 
 void Moveable::Update(float dt)
@@ -83,7 +84,7 @@ void Moveable::Follow(Vector2 target) {
 void Moveable::StartDrag(Vector2 mouse)
 {
   std::cout << "Drag started\n";
-  layer = 1;
+  layer = RenderLayer::DRAGGING;
   dragging = true;
 
   clickOffset = {
@@ -99,7 +100,7 @@ void Moveable::StartDrag(Vector2 mouse)
 
 void Moveable::StopDrag()
 {
-  layer = 0;
+  layer = RenderLayer::CARD;
   dragging = false;
   std::cout << "Drag stopped\n" << "original.x=" << originalPosition.x << "original.y=" << originalPosition.y << "\n";
   Move(originalPosition);

@@ -1,6 +1,7 @@
 #pragma once
 #include "engine/object.h"
 #include "engine/render_queue.h"
+#include "engine/render_layer.h"
 #include "engine/render_resources.h"
 #include <vector>
 #include "raylib.h"
@@ -31,7 +32,7 @@ public:
 
   Node* container = nullptr;
   Transform transform;
-  int layer = 0;
+  RenderLayer layer = RenderLayer::CARD;
   bool visible = true;
   float lift = 0.f;
   float targetLift = 0.f;
