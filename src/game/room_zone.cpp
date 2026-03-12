@@ -11,7 +11,7 @@ RoomZone::RoomZone(engine::Transform transform)
 
 void RoomZone::Layout() // should align horizontally with equal spacing
 {
-  float spacing = 120; // for now
+  float spacing = 240; // for now
 
   for (size_t i = 0; i < cards.size(); i++)
   {

@@ -1,10 +1,11 @@
 #include "game/card.h"
+#include "game/deck_zone.h"
+#include "game/room_zone.h"
 #include "game/background.h"
 #include "engine/render_queue.h"
 #include "engine/shader_instance.h"
 #include "engine/interaction_system.h"
 #include "raylib.h"
-#include "game/deck_zone.h"
 #include <memory>
 
 int main()
@@ -68,7 +69,16 @@ int main()
 
   game::DeckZone deckZone(
     engine::Transform{
-      .position = {.x=300, .y=300},
+      .position = {.x=150, .y=300},
+      .size = size,
+      .rotation = rotation,
+      .scale = scale
+    }
+  );
+
+  game::RoomZone roomZone(
+    engine::Transform{
+      .position = {.x=400, .y=300},
       .size = size,
       .rotation = rotation,
       .scale = scale
@@ -76,13 +86,19 @@ int main()
   );
 
   nodes.push_back(&background);
+  nodes.push_back(&roomZone);
   nodes.push_back(&deckZone);
 
   for (size_t i = 0; i < nodes.size(); i++)
   {
     game::Card* card =  dynamic_cast<game::Card*>(nodes.at(i));
-    if (card)
-      deckZone.AddCard(card);
+    if (card) {
+      if (i < 4) {
+        roomZone.AddCard(card);
+      } else {
+        deckZone.AddCard(card);
+      }
+    }
   }
 
   engine::InteractionSystem interaction;
