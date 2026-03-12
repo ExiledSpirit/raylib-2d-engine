@@ -7,6 +7,7 @@ namespace game
 
 enum struct CardEnhancement
 {
+    E_BACK=0,
     E_BLANK = 1,
     E_GOLD = 6
 };
@@ -55,7 +56,9 @@ public:
     CardRank rank;
     CardEnhancement enhancement;
 
-
+    bool isFlipped = false;
+    void Flip();
+    void Unflip();
 private:
     Texture2D* deckAtlas;
     Texture2D* enhancerAtlas;

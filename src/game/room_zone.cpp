@@ -26,4 +26,13 @@ void RoomZone::Layout() // should align horizontally with equal spacing
   }
 }
 
+void RoomZone::AddCard(Card* card)
+{
+  card->Unflip();
+  cards.push_back(card);
+  card->container = this;
+
+  Layout();
+}
+
 }

@@ -31,8 +31,10 @@ void Card::Render()
         dest.height * 0.5f
     };
 
+    float enhancement_w = (float)((isFlipped ? (int)CardEnhancement::E_BACK : (int)enhancement) * CARD_W);
+
     Rectangle enhancerSource = {
-        (float)((int)enhancement * CARD_W),
+        enhancement_w,
         0,
         (float)CARD_W,
         (float)CARD_H
@@ -46,6 +48,8 @@ void Card::Render()
         tilt,
         WHITE
     );
+
+    if (isFlipped) return;
 
     Rectangle cardSource = {
         (float)((int)rank * CARD_W),
@@ -141,4 +145,15 @@ bool Card::CollidesWithPoint(Vector2 point)
            rotated.y <=  halfH;
 }
 
+void Card::Flip()
+{
+    isFlipped = true;
 }
+
+void Card::Unflip()
+{
+    isFlipped = false;
+}
+
+}
+

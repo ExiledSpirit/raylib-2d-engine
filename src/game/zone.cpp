@@ -14,7 +14,6 @@ Zone::Zone(engine::Transform transform)
 
 void Zone::AddCard(Card* card)
 {
-  // card->enhancement = (game::CardEnhancement)0; // 
   cards.push_back(card);
   card->container = this;
 

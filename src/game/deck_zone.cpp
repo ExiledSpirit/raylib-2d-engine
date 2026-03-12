@@ -26,4 +26,13 @@ void DeckZone::Layout() // should stack vertically
   }
 }
 
+void DeckZone::AddCard(Card* card)
+{
+  card->Flip();
+  cards.push_back(card);
+  card->container = this;
+
+  Layout();
+}
+
 }
