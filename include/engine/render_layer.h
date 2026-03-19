@@ -5,10 +5,11 @@ namespace engine
 
 enum class RenderLayer {
   BACKGROUND = 0,
-  CARD = 1,
-  MOVING = 2,
-  HOVERING = 3,
-  DRAGGING = 3
+  ZONE = 10,
+  CARD = 20,
+  MOVING = 30,
+  HOVERING = 40,
+  DRAGGING = 40
 };
 
 }

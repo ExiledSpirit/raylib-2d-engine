@@ -1,11 +1,30 @@
 #include "engine/interaction_system.h"
 #include "engine/moveable.h"
+#include <algorithm>
 
 namespace engine
 {
-void InteractionSystem::Update(std::vector<Node*>& nodes)
+
+static void CollectNodes(Node* node, std::vector<Node*>& out)
+{
+  out.push_back(node);
+
+  for (auto* child : node->children)
+    CollectNodes(child, out);
+}
+
+void InteractionSystem::Update(std::vector<Node*>& roots)
 {
   Vector2 mouse = GetMousePosition();
+
+  std::vector<Node*> nodes;
+
+  for (auto* root : roots)
+    CollectNodes(root, nodes);
+
+  std::stable_sort(nodes.begin(), nodes.end(), [](Node* a, Node* b) {
+    return a->layer < b->layer;
+  });
 
   Node* hovered = nullptr;
 
@@ -25,8 +44,10 @@ void InteractionSystem::Update(std::vector<Node*>& nodes)
     node->hover.is = false;
   }
 
-  if (hovered)
+  if (hovered) {
+    TraceLog(LOG_INFO, "%d", hovered->layer);
     hovered->hover.is = true;
+  }
 
   if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
   {
@@ -44,6 +65,11 @@ void InteractionSystem::Update(std::vector<Node*>& nodes)
   {
     if (this->draggingNode) {
       this->draggingNode->StopDrag();
+
+      // Notify drop targets
+      // for (Node* node : nodes)
+      //   if (node->CollidesWithPoint(mouse))
+      //     node->OnRelease(draggingNode);
       this->draggingNode = nullptr;
     }
   }

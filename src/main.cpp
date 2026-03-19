@@ -7,6 +7,15 @@
 #include "engine/interaction_system.h"
 #include "raylib.h"
 #include <memory>
+#include <algorithm>
+#include <random>
+
+void DrawRoomCard(game::DeckZone &deck, game::RoomZone &room)
+{
+  if (!room.AcceptCard(deck.GetNextCard())) return;
+
+  room.AddCard(deck.DrawCard());
+}
 
 int main()
 {
@@ -20,7 +29,7 @@ int main()
   Vector2 position {100, 300};
   Vector2 size {71, 95};
   float rotation = 0.0f;
-  float scale = 3.0f;
+  float scale = 2.0f;
 
   engine::ShaderInstance *skewShaderInstance = new engine::ShaderInstance();
   engine::ShaderInstance *backgroundShaderInstance = new engine::ShaderInstance();
@@ -62,10 +71,11 @@ int main()
         cardRenderResources
       );
 
-      nodes.push_back(card.get());
       cards.push_back(std::move(card));
     }
   }
+
+  std::shuffle(cards.begin(), cards.end(), std::mt19937(std::random_device{}()));
 
   game::DeckZone deckZone(
     engine::Transform{
@@ -78,29 +88,33 @@ int main()
 
   game::RoomZone roomZone(
     engine::Transform{
-      .position = {.x=400, .y=300},
-      .size = size,
+      .position = {.x=300, .y=200},
+      .size = {
+        .x = 700,
+        .y = 400
+      },
       .rotation = rotation,
       .scale = scale
     }
   );
 
-  nodes.push_back(&background);
-  nodes.push_back(&roomZone);
-  nodes.push_back(&deckZone);
-
-  for (size_t i = 0; i < nodes.size(); i++)
+  for (std::unique_ptr<game::Card>& card : cards)
   {
-    game::Card* card =  dynamic_cast<game::Card*>(nodes.at(i));
+    // nodes.push_back(card.get());
+  }
+
+
+  for (size_t i = 0; i < cards.size(); i++)
+  {
+    game::Card* card = cards.at(i).get();
     if (card) {
-      if (i < 4) {
-        roomZone.AddCard(card);
-      } else {
-        deckZone.AddCard(card);
-      }
+      deckZone.AddCard(card);
     }
   }
 
+  nodes.push_back(&background);
+  nodes.push_back(&roomZone);
+  nodes.push_back(&deckZone);
   engine::InteractionSystem interaction;
   while (!WindowShouldClose())
   {
@@ -108,22 +122,15 @@ int main()
 
     queue.Clear();
     interaction.Update(nodes);
+    if (IsKeyPressed(KEY_SPACE))
+      DrawRoomCard(deckZone, roomZone);
 
-    for (size_t i = 0; i < nodes.size(); i++)
+    for (auto* node : nodes)
     {
-      game::Card* card =  dynamic_cast<game::Card*>(nodes.at(i));
-      if (card) {
-        card->Update(dt);
-        card->Draw(queue);
-        continue;
-      }
-      game::Background* background = dynamic_cast<game::Background*>(nodes.at(i));
-      if (background) {
-        background->Update(dt);
-        background->Draw(queue);
-      }
+      node->Update(dt);
+      node->Draw(queue);
     }
-
+  
     BeginDrawing();
       ClearBackground(DARKGREEN);
 

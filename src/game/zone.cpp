@@ -9,6 +9,7 @@ namespace game
 Zone::Zone(engine::Transform transform)
   : Node(transform)
 {
+  layer = engine::RenderLayer::ZONE;
   hover.can = false;
 }
 
@@ -36,6 +37,14 @@ bool Zone::AcceptCard(Card* card)
 void Zone::Layout()
 {
   // Flex layout implementation
+}
+
+void Zone::Update(float dt)
+{
+  for (auto* card : cards)
+  {
+    card->Update(dt);
+  }
 }
 
 }

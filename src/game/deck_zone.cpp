@@ -1,5 +1,6 @@
 #include "game/deck_zone.h"
 #include "game/card.h"
+#include "raylib.h"
 
 namespace game
 {
@@ -7,6 +8,29 @@ namespace game
 DeckZone::DeckZone(engine::Transform transform)
   : Zone(transform)
 {
+}
+
+Card* DeckZone::GetNextCard()
+{
+  if (cards.empty()) {
+    TraceLog(LOG_INFO, "Deck is empty so wont draw.");
+    return nullptr;
+  }
+
+  Card* card = cards.back();
+  return card;
+}
+
+Card* DeckZone::DrawCard()
+{
+  if (cards.empty()) {
+    TraceLog(LOG_INFO, "Deck is empty so wont draw.");
+    return nullptr;
+  }
+
+  Card* card = cards.back();
+  cards.pop_back();
+  return card;
 }
 
 void DeckZone::Layout() // should stack vertically
@@ -31,6 +55,7 @@ void DeckZone::AddCard(Card* card)
   card->Flip();
   cards.push_back(card);
   card->container = this;
+  this->children.push_back(card);
 
   Layout();
 }

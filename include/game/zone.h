@@ -16,6 +16,7 @@ public:
 
   virtual void AddCard(Card* card);
   virtual void RemoveCard(Card* card);
+  void Update(float dt) override;
   void Render() override {}
 
   virtual void Layout(); // Flex layout, should be called whenever cards are added/ rmeoved
